@@ -1,28 +1,21 @@
+/*%option main debug*/
+%option noyywrap
+%option nounput
+%option noinput
+
 %{
-#include <stdio.h>
+#include <string.h>
+#include "y.tab.h"
 %}
 
 %x NAME
 
 LINK	>
 WORD	[[:graph:]]*
+TEXT	[^>]+
 
 %%
 
-LINK		{ printf("LINK: %s\n", yytext); BEGIN(NAME); }
-<NAME>{WORD}	{ printf("LINK_ADDR: %s\n", yytext); BEGIN(0); }
-[^{LINK}]*	{ printf("TEXT: %s\n", yytext); }
-
-%%
-
-int main(int argc, char *argv[])
-{
-        ++argv; --argc;  /* skip over program name */
-        if (argc > 0)
-                yyin = fopen(argv[0], "r");
-        else
-                yyin = stdin;
-
-        yylex();
-	printf("\n");
-}
+{LINK}		{ BEGIN(NAME); yylval.string = strdup(yytext); return LINK;}
+<NAME>{WORD}	{ BEGIN(0); yylval.string = strdup(yytext); return LINK_ADDR; }
+TEXT		{ yylval.string = strdup(yytext); return TEXT; }
