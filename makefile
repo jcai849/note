@@ -1,6 +1,6 @@
-PROG=note
+PROG = note
 
-RM=rm -f
+RM = rm -f
 CFLAGS = -g
 LFLAGS = -i
 YFLAGS = -dtv
