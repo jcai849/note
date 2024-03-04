@@ -1,3 +1,4 @@
+note
 *.swp
 *.o
 lex.yy.c

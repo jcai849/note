@@ -11,11 +11,13 @@
 %x NAME
 
 LINK	>
-WORD	[[:graph:]]*
-TEXT	[^>]+
+WORD	[[:graph:]]+
+NONWORD [^[:graph:]]
+TEXT	[^>]LINK_ADDR+
 
 %%
 
-{LINK}		{ BEGIN(NAME); yylval.string = strdup(yytext); return LINK;}
+{LINK}		{ BEGIN(NAME); yylval.string = strdup(yytext); return LINK; }
 <NAME>{WORD}	{ BEGIN(0); yylval.string = strdup(yytext); return LINK_ADDR; }
+<NAME>{NONWORD}	{ BEGIN(0); yylval.string = strdup(yytext); return TEXT; }
 TEXT		{ yylval.string = strdup(yytext); return TEXT; }
