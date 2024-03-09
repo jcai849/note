@@ -1,12 +1,12 @@
 PROG = note
 
 RM = rm -f
-CFLAGS = -g
-LFLAGS = -i
+CFLAGS = -Wall -g -O2
+LDLIBS= `pkg-config libgvc --libs` -lfl
 YFLAGS = -dtv
 
 ${PROG}: y.tab.c lex.yy.c main.c
-	${LINK.c} y.tab.c lex.yy.c main.c -o ${PROG}
+	$(CC) $(CFLAGS) y.tab.c lex.yy.c main.c $(LDLIBS) -o ${PROG}
 main.c: y.tab.h
 lex.yy.c: ${PROG}.l y.tab.h
 	${LEX.l} ${PROG}.l

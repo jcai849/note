@@ -1,7 +1,7 @@
 %{
 #include <stdio.h>
 #include <string.h>
-#define YYDEBUG 1
+#include "note.h"
 int yylex(void);
 void yyerror (char const *s) { fprintf (stderr, "%s\n", s); }
 %}
@@ -15,7 +15,11 @@ document:
         | document link
         | document text
         ;
-link: LINK LINK_ADDR ;
+link: LINK LINK_ADDR {
+	Agnode_t *m = agnode(g, $2, 1);
+	agedge(g, n, m, 0, 1);
+	free($2);
+};
 text:
       TEXT
     | LINK TEXT

@@ -1,5 +1,4 @@
 /*%option main debug*/
-%option noyywrap
 %option nounput
 %option noinput
 
@@ -13,11 +12,11 @@
 LINK	>
 WORD	[[:graph:]]+
 NONWORD [^[:graph:]]
-TEXT	[^>]LINK_ADDR+
+TEXT	[^>]+
 
 %%
 
 {LINK}		{ BEGIN(NAME); yylval.string = strdup(yytext); return LINK; }
 <NAME>{WORD}	{ BEGIN(0); yylval.string = strdup(yytext); return LINK_ADDR; }
 <NAME>{NONWORD}	{ BEGIN(0); yylval.string = strdup(yytext); return TEXT; }
-TEXT		{ yylval.string = strdup(yytext); return TEXT; }
+{TEXT}		{ yylval.string = strdup(yytext); return TEXT; }
