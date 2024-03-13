@@ -1,12 +1,12 @@
 PROG = note
 
 RM = rm -f
-CFLAGS = -Wall -g -O2
+CFLAGS = -Wall -Wextra -g -O2 -ansi -Wpedantic -D_POSIX_C_SOURCE=200112L
 LDLIBS= `pkg-config libgvc --libs` -lfl
-YFLAGS = -dtv
+YFLAGS = -dtvy
 
-${PROG}: y.tab.c lex.yy.c main.c
-	$(CC) $(CFLAGS) y.tab.c lex.yy.c main.c $(LDLIBS) -o ${PROG}
+${PROG}: y.tab.c lex.yy.c main.c graph.c
+	$(CC) $(CFLAGS) y.tab.c lex.yy.c main.c graph.c $(LDLIBS) -o ${PROG}
 main.c: y.tab.h
 lex.yy.c: ${PROG}.l y.tab.h
 	${LEX.l} ${PROG}.l

@@ -5,18 +5,29 @@
 %{
 #include <string.h>
 #include "y.tab.h"
+char *preproc(char *text, char character)
 %}
 
-%x NAME
+%x IN_LINK
 
-LINK	>
-WORD	[[:graph:]]+
-NONWORD [^[:graph:]]
-TEXT	[^>]+
+LINK		>
+TEXT		[^>]+
+SINGLE_QUOTED   \'([^\\'\n]|(\\\'))+\'
+DOUBLE_QUOTED   \"([^\\"\n]|(\\\"))+\"
+WORD	        ([^\\[:space:][:cntrl:]]|(\\[[:blank:]]))+
 
 %%
 
-{LINK}		{ BEGIN(NAME); yylval.string = strdup(yytext); return LINK; }
-<NAME>{WORD}	{ BEGIN(0); yylval.string = strdup(yytext); return LINK_ADDR; }
-<NAME>{NONWORD}	{ BEGIN(0); yylval.string = strdup(yytext); return TEXT; }
-{TEXT}		{ yylval.string = strdup(yytext); return TEXT; }
+{LINK}[[:blank:]]*	{ BEGIN(IN_LINK); yylval.string = strdup(yytext); return LINK; }
+<IN_LINK>{WORD}		{ BEGIN(0); yylval.string = strdup(yytext); return LINK_ADDR; }
+<IN_LINK>{SINGLE_QUOTED} { BEGIN(0); yylval.string = strdup(preproc(yytext, '\'')); return LINK_ADDR; }
+<IN_LINK>{DOUBLE_QUOTED} { BEGIN(0); yylval.string = strdup(preproc(yytext, '"')); return LINK_ADDR; }
+{TEXT}			{ yylval.string = strdup(yytext); return TEXT; }
+
+%%
+
+char *preproc(char *text, char character) {
+/* remove backslash for escaped character */
+/* remove first and last characters */
+return &'a'
+}

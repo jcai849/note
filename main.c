@@ -1,15 +1,37 @@
 #include <string.h>
 #include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
 #include "y.tab.h"
 #include "note.h"
 
-Agraph_t *graph;
-Agnode_t *self_node;
+int output_graph=0, output_html=1;
 
 int main(int argc, char *argv[]) {
-	if (argc == 2 && strcmp(argv[1], "-p") == 0) yydebug = 1;
-	graph = agopen("G", Agstrictdirected, NULL);
+	extern char *optarg;
+	extern int optind;
+	int c; 
+	static char usage[] = "%s [-hdg]\n";
+
+	while ((c = getopt(argc, argv, "hdg")) != -1)
+		switch (c) {
+		case 'h':
+			fprintf(stderr, usage, argv[0]);
+			exit(EXIT_SUCCESS);
+		case 'd':
+			yydebug = 1;
+			break;
+		case 'g':
+			output_graph = 1; output_html = 0;
+			break;
+		case '?':
+			fprintf(stderr, usage, argv[0]);
+			exit(EXIT_FAILURE);
+		}
+	
+	init_graph();
 	yyparse();
-	agwrite(graph, stdout);
-	return 0;
+	if (output_graph) write_graph();
+	close_graph();
+	exit(EXIT_SUCCESS);
 }
