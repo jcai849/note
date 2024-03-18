@@ -1,4 +1,4 @@
-#include <graphviz/gvc.h>
+#include <graphviz/cgraph.h>
 #include "note.h"
 
 Agraph_t *graph;
