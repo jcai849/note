@@ -1,6 +1,8 @@
 note
+test/test_all
 *.swp
 *.o
+*.a
 lex.yy.c
 y.output
 y.tab.c

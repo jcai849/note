@@ -1,1 +1,2 @@
+git clone --recurse-submodules git@github.com:jcai849/note.git
 depends: libgraphviz-dev
