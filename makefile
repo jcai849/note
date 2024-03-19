@@ -1,19 +1,26 @@
+.POSIX:
+
 PROG = note
 
 RM = rm -f
-CFLAGS = -Wall -Wextra -g -O2 -ansi -Wpedantic -D_POSIX_C_SOURCE=200112L
-LDLIBS= `pkg-config libgvc --libs` -lfl
-YFLAGS = -dtvy
+CFLAGS = -Wall -Wextra
+CFLAGS += -g
+CFLAGS += -D_POSIX_C_SOURCE=200809L
+LDLIBS = -lfl -ly			# Flex & yacc libraries
+#LDLIBS += `pkg-config libgvc --libs`	# graphviz
+YFLAGS = -y				# POSIX yacc
+YFLAGS += -d				# Emit header
 
-${PROG}: y.tab.c lex.yy.c main.c graph.c
-	$(CC) $(CFLAGS) y.tab.c lex.yy.c main.c graph.c $(LDLIBS) -o ${PROG}
-main.c: y.tab.h
-lex.yy.c: ${PROG}.l y.tab.h
-	${LEX.l} ${PROG}.l
-y.tab.c y.tab.h: ${PROG}.y 
-	${YACC.y} ${PROG}.y
+POSIXLY_CORRECT=1
+export POSIXLY_CORRECT
+
+all debug: libnote.a
+libnote.a: libnote.a(scanner.o parser.o)
+scanner.o: y.tab.h
+y.tab.h: parser.o
+parser.o: note.h
+
 clean:
-	${RM} lex.yy.c
-	${RM} y.output
-	${RM} y.tab.c
+	${RM} ${PROG}
 	${RM} y.tab.h
+	${RM} *.o
