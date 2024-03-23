@@ -1,7 +1,10 @@
 %{
+
 #include <stdio.h>
 #include <string.h>
-#define YYSTYPE char *
+#include "note.h"
+
+void yyerror (char const *s) { fprintf (stderr, "%s\n", s); }
 
 %}
 
@@ -18,3 +21,13 @@ link:	LINK
 	;
 text:	TEXT
 	;
+
+%%
+
+int string_parse(char *s) {
+        string_buffer_create(s);
+        yyparse();
+        string_buffer_delete();
+        return 0;
+}
+
