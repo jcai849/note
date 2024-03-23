@@ -1,14 +1,16 @@
 .POSIX:
 .PHONY: all clean test
 
-.c:
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDLIBS)
-
 LIBDIR=..
 UTESTDIR=acutest
 
+.c:
+	export PKG_CONFIG_PATH=$(LIBDIR) &&\
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDLIBS)
+
 RM      = rm -f
 LDLIBS = $(LIBDIR)/libnote.a
+LDLIBS += `pkg-config note --libs --static`
 CFLAGS  = -Wall -Wextra
 CFLAGS += -g
 CFLAGS += -D_POSIX_C_SOURCE=200809L

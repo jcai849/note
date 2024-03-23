@@ -7,11 +7,8 @@ RM       = rm -f
 CFLAGS   = -Wall -Wextra
 CFLAGS  += -g
 CFLAGS  += -D_POSIX_C_SOURCE=200809L
-LDFLAGS  =  -lfl -ly                  # Flex & yacc libraries
-#LDFLAGS+= `pkg-config libgvc --libs` # graphviz
-YFLAGS   = -y                         # POSIX yacc
-YFLAGS  += -d                         # Emit header
-ARFLAGS += --record-libdeps "$(LDFLAGS)"
+LDFLAGS  =  `pkg-config note --libs --static`
+YFLAGS   = -yd
 
 .y.c:
 	export POSIXLY_CORRECT=1 &&\
