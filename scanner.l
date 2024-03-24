@@ -5,19 +5,9 @@
 
 #include <string.h>
 #include "note.h"
-#include "y.tab.h"
+#include "buffer.h"
 
-YY_BUFFER_STATE string_buffer;
-
-int string_buffer_create(char *s) {
-	string_buffer = yy_scan_string(s);
-	return 0;
-}
-
-int string_buffer_delete(void) {
-	yy_delete_buffer(string_buffer);
-	return 0;
-}
+struct Buffer output_buffer;
 
 %}
 
@@ -26,8 +16,20 @@ LINK_END          ' '
 LINK_QUOTE_END    "\\ "
 QUOTE_LINK_BEGIN  "\\>"
 QUOTE_QUOTE       \\\\
-TEXT	          [^\\>]+
+TEXT	          [^\\>]*
 
 %%
 
-{TEXT}			{ yylval = strdup(yytext); return TEXT; }
+{TEXT}			{ write_buffer(&output_buffer, yytext); }
+
+%%
+
+int string_parse(char *in, char *out, int out_size) {
+	YY_BUFFER_STATE input_buffer;
+
+	init_buffer(&output_buffer, out, out_size);
+	input_buffer = yy_scan_string(in);
+	yylex();
+	yy_delete_buffer(input_buffer);
+	return 0;
+}

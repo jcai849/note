@@ -1,5 +1,1 @@
-#define YYSTYPE char *
-
-int string_parse(char *s);
-int string_buffer_create(char *s);
-int string_buffer_delete(void);
+int string_parse(char *in, char *out, int out_size);
