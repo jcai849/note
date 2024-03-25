@@ -9,6 +9,7 @@
 
 struct Buffer output_buffer;
 
+size_t wo(char *yytext) { return write_buffer(&output_buffer, yytext);}
 %}
 
 LINK_BEGIN        >
@@ -24,12 +25,13 @@ TEXT	          [^\\>]*
 
 %%
 
+/* return 0 on failure */
 int string_parse(char *in, char *out, int out_size) {
 	YY_BUFFER_STATE input_buffer;
 
 	init_buffer(&output_buffer, out, out_size);
 	input_buffer = yy_scan_string(in);
-	yylex();
+	if (yylex()) return 0;
 	yy_delete_buffer(input_buffer);
-	return 0;
+	return 1;
 }
