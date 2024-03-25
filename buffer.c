@@ -8,6 +8,11 @@ void init_buffer(struct Buffer *buffer, char *alloc, int size) {
 }
 
 int write_buffer(struct Buffer *buffer, char *source) {
+void clear_buffer(struct Buffer *buffer) {
+	*buffer->buffer = '\0';
+	buffer->current_position = 0;
+}
+
 	size_t source_length = strlen(source);
 
         if (source_length >= buffer->size - buffer->current_position) return 1;

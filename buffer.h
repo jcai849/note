@@ -7,3 +7,4 @@ struct Buffer {
 
 void init_buffer(struct Buffer *buffer, char *alloc, int size);
 int write_buffer(struct Buffer *buffer, char *source);
+void clear_buffer(struct Buffer *buffer);
