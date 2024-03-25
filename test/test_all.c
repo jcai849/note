@@ -3,6 +3,7 @@
 #include "acutest.h"
 #include "note.h"
 #include "buffer.h"
+#include "generator.h"
 
 void test_testing(void) { TEST_CHECK(1); }
 
@@ -108,7 +109,7 @@ TEST_LIST = {
 	{ "clearing the buffer works as expected", test_clear_buffer },
 	{ "the string_parse() performs a parse", test_parse },
 	{ "multiple parses are allowed for", test_multiple_parses },
-	{ "sring_parse of text with no link is equivalent to make_text", test_parse_text },
+	{ "string_parse of text with no link creates appropriate paragraph blocks", test_parse_text },
 	{ NULL, NULL }     /* zeroed record marking the end of the list */
 };
 
