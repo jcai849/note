@@ -17,11 +17,11 @@ CFLAGS += -D_POSIX_C_SOURCE=200809L
 CFLAGS += -I$(UTESTDIR)/include/
 CFLAGS += -I$(LIBDIR)
 
-all: test_all
-
-test: all
+test: test_all
 	./test_all
+
+test_all: test_all.c test_test.c test_buffer.c test_parse.c
 
 clean:
 	$(RM) *.o
-	$(RM) test_all
+	$(RM) test*[!ch]

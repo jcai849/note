@@ -3,8 +3,6 @@
 
 #include <stddef.h>
 
-#define LENGTH(A) sizeof A / sizeof A[0]
-
 struct Buffer {
         char *buffer;
         int current_position;
