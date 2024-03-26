@@ -63,7 +63,7 @@ QUOTE_CATCH             \\
 
 <INITIAL>{PARAGRAPH_MARKER} { BEGIN(PARAGRAPH);
                               CHECK(output_begin_paragraph());
-                              CHECK(wo(yytext)); }
+                              yyless(0); }
 
 <PARAGRAPH>{TEXT}       |
 <PARAGRAPH>\n           CHECK(wo(yytext));
