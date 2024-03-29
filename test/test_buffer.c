@@ -49,9 +49,9 @@ void test_clear_buffer(void) {
 	char *test_string =  "123456789";
 
 	init_buffer(&buffer, alloc, LENGTH(alloc));
-	write_buffer(&buffer, test_string);
+	TEST_ASSERT(write_buffer(&buffer, test_string));
 	clear_buffer(&buffer);
 	TEST_CHECK(strcmp(alloc, "") == 0);
-	write_buffer(&buffer, test_string);
+	TEST_ASSERT(write_buffer(&buffer, test_string));
 	TEST_CHECK(strcmp(alloc, test_string) == 0);
 }

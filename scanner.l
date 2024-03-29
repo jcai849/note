@@ -17,11 +17,13 @@ struct Buffer output_buffer;
 size_t wo(char *yytext) { return write_buffer(&output_buffer, yytext);}
 int output_begin_paragraph(void) { return begin_paragraph(&output_buffer); }
 int output_end_paragraph(void)   { return end_paragraph(&output_buffer); }
+int output_begin_link(void)      { return begin_link(&output_buffer); }
+int output_end_link(void)        { return end_link(&output_buffer); }
 
 %}
 
-%s PARAGRAPH HEADING LIST_ITEM KV_LIST
-%s LINK LINK_NAME
+%x PARAGRAPH HEADING LIST_ITEM KV_LIST
+%x LINK
 
 /* blocks */
 HEADING_MARKER          =
@@ -32,44 +34,59 @@ KV_LIST_KEY_END         \[
 NOTE_BEGIN              \[?NOTE\]?|:?
 PARAGRAPH_MARKER        .
 
-BLOCK_END	        \n{2,}
+BLOCK_END	        \n[[:blank:]]*\n
 
-LINK_BEGIN              >>
+LINK_BEGIN              >[[:blank:]]*
+ALT_LINK_BEGIN          >>[[:blank:]]*
 TRANSCLUSION_BEGIN      >+
-/* bring in as <div> with identifier */
-LINK_END                " "
-LINK_CATCH              >
+/* ^ bring in as <div> with identifier */
+EMBEDDED_TRANSCLUSION_BEGIN >\|
+EMBEDDED_TRANSCLUSION_END    \|
+LINK_END                >|[[:space:]]
 ANCHOR_BEGIN            @
-/* also -- account for line ending in link end w/ yyless(1); */
+
+ADDRESS                 [^\\[:space:]>]*
 
 STRONG                  \*
 ITALIC                  ~
 SUPERSCRIPT             \^
 SUBSCRIPT               _
 VARIABLE                \|
-TEXT	                [^*^_|\n\\>@]*
+TEXT                    [^\n>]*
+/* TEXT	                [^*^_|\n\\>@]* */
 
 QUOTE_QUOTE             \\\\
-QUOTE_LINK_BEGIN        \\>
-QUOTE_LINK_END          "\\ "
+QUOTE_LINK_BEGIN_PRE    \\>
+QUOTE_LINK_BEGIN_POST   >\n
+QUOTE_LINK_END          \\[[:blank:]] 
 QUOTE_HEADING_MARKER    \\=
 QUOTE_LIST_ITEM_MARKER  \\-
 /* etc... */
 QUOTE_CATCH             \\
 
 %%
+	int RET = 0;
 
 <INITIAL>[[:space:]]*
+<INITIAL>{PARAGRAPH_MARKER} { CHECK(output_begin_paragraph());
+                              yyless(0); BEGIN(PARAGRAPH);}
 
-<INITIAL>{PARAGRAPH_MARKER} { BEGIN(PARAGRAPH);
-                              CHECK(output_begin_paragraph());
-                              yyless(0); }
-
+<PARAGRAPH>{ALT_LINK_BEGIN} |
+<PARAGRAPH>{LINK_BEGIN} { output_begin_link(); RET = PARAGRAPH; BEGIN(LINK); }
+<PARAGRAPH>{QUOTE_LINK_BEGIN_PRE}  { CHECK(wo(yytext+1)); }
+<PARAGRAPH>{QUOTE_LINK_BEGIN_POST} { CHECK(wo(yytext)); }
 <PARAGRAPH>{TEXT}       |
 <PARAGRAPH>\n           CHECK(wo(yytext));
 <PARAGRAPH><<EOF>>      |
-<PARAGRAPH>{BLOCK_END}  { BEGIN(INITIAL);
-                          CHECK(output_end_paragraph()); }
+<PARAGRAPH>{BLOCK_END}  { CHECK(output_end_paragraph()); BEGIN(INITIAL); }
+
+<LINK>{ADDRESS}         { CHECK(wo(yytext)); }
+<LINK>{QUOTE_LINK_END}  { yyless(0); }
+<LINK>{QUOTE_LINK_BEGIN_PRE} { CHECK(wo(">")); }
+<LINK>{QUOTE_QUOTE}     |
+<LINK>{QUOTE_CATCH}     { CHECK(wo("\\")); }
+<LINK><<EOF>>           |
+<LINK>{LINK_END}        { output_end_link(); yyless(0); BEGIN(RET); }
 
 %%
 

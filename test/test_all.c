@@ -15,6 +15,8 @@ TEST_LIST = {
 	{ "parse with a string larger than buffer returns 0", test_parse_too_big },
 	{ "string_parse of single paragraph text with no link creates appropriate paragraph blocks", test_parse_single_paragraph },
 	{ "string_parse of multi paragraph text with no link creates appropriate paragraph blocks", test_parse_multi_paragraph },
+	{ "string_parse of only link is equivalent to paragraph with link in it", test_parse_solo_link },
+	{ "string_parse of links mixed with test is equivalent to paragraph with links and text in it", test_parse_mixed_links },
 	{ NULL, NULL }     /* zeroed record marking the end of the list */
 };
 
