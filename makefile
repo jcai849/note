@@ -1,5 +1,5 @@
 .POSIX:
-.PHONY: all lib test clean
+.PHONY: all lib test clean tags
 
 PROG = note
 
@@ -26,3 +26,6 @@ clean:
 	$(RM) *.o
 	$(RM) *.a
 	cd test && $(MAKE) clean
+
+tags:
+	ctags -R
