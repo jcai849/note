@@ -191,3 +191,29 @@ void test_escaped_links(void) {
 	TEST_CHECK(strcmp(parser_alloc, checker_alloc) == 0);
 	clear_buffer(&checker_buffer);
 }
+
+void test_links_w_escapes(void) {
+	char parser_alloc[BUFSIZ];
+	char checker_alloc[BUFSIZ];
+	struct Buffer checker_buffer;
+	char *escaped_links  = ">>\\ example\\.com\t>> example\\ .com\n>>example.com\\\n";
+	
+	TEST_ASSERT(string_parse(escaped_links, parser_alloc, LENGTH(parser_alloc)));
+	init_buffer(&checker_buffer, checker_alloc, LENGTH(checker_alloc));
+	TEST_ASSERT(begin_paragraph(&checker_buffer));
+	TEST_ASSERT(begin_link(&checker_buffer));
+	TEST_ASSERT(write_buffer(&checker_buffer, " example\\.com"));
+	TEST_ASSERT(end_link(&checker_buffer));
+	TEST_ASSERT(write_buffer(&checker_buffer, "\t"));
+	TEST_ASSERT(begin_link(&checker_buffer));
+	TEST_ASSERT(write_buffer(&checker_buffer, "example .com"));
+	TEST_ASSERT(end_link(&checker_buffer));
+	TEST_ASSERT(write_buffer(&checker_buffer, "\n"));
+	TEST_ASSERT(begin_link(&checker_buffer));
+	TEST_ASSERT(write_buffer(&checker_buffer, "example.com\\"));
+	TEST_ASSERT(end_link(&checker_buffer));
+	TEST_ASSERT(write_buffer(&checker_buffer, "\n"));
+	TEST_ASSERT(end_paragraph(&checker_buffer));
+	TEST_CHECK(strcmp(parser_alloc, checker_alloc) == 0);
+	clear_buffer(&checker_buffer);
+}
