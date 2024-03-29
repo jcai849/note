@@ -71,7 +71,6 @@ QUOTE_CATCH             \\
 <INITIAL>{PARAGRAPH_MARKER} { CHECK(output_begin_paragraph());
                               yyless(0); BEGIN(PARAGRAPH);}
 
-<PARAGRAPH>{ALT_LINK_BEGIN} |
 <PARAGRAPH>{LINK_BEGIN} { output_begin_link(); RET = PARAGRAPH; BEGIN(LINK); }
 <PARAGRAPH>{QUOTE_LINK_BEGIN_PRE}  { CHECK(wo(yytext+1)); }
 <PARAGRAPH>{QUOTE_LINK_BEGIN_POST} { CHECK(wo(yytext)); }

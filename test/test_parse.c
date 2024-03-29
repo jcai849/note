@@ -85,7 +85,7 @@ void test_parse_solo_link(void) {
 	long unsigned int i = 0;
 	char *links[]  = { ">example.com",
 	                   "\n>example.com",
-	                   ">>example.com\n\n" };
+	                   ">example.com\n\n" };
 	init_buffer(&checker_buffer, checker_alloc, LENGTH(checker_alloc));
 
 	TEST_CASE("solo link");
@@ -143,7 +143,7 @@ int test_end_single_link(char *parser_alloc, int length_parser_alloc, struct Buf
 }
 
 int test_multi_link(char *parser_alloc, int length_parser_alloc, struct Buffer *checker_buffer) {
-	char *mixed_link  = ">> example.com> example.com lorem ipsum\n>>example.com";
+	char *mixed_link  = "> example.com> example.com lorem ipsum\n>example.com";
 
 	TEST_ASSERT(string_parse(mixed_link, parser_alloc, length_parser_alloc));
 	TEST_ASSERT(begin_paragraph(checker_buffer));
