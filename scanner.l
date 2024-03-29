@@ -36,13 +36,14 @@ PARAGRAPH_MARKER        .
 
 BLOCK_END	        \n[[:blank:]]*\n
 
-LINK_BEGIN              >[[:blank:]]*
-ALT_LINK_BEGIN          >>[[:blank:]]*
+GENERIC_LINK_BEGIN      >[[:blank:]]*
+HYPER_LINK_BEGIN        >>[[:blank:]]*
 TRANSCLUSION_BEGIN      >+
 /* ^ bring in as <div> with identifier */
 EMBEDDED_TRANSCLUSION_BEGIN >\|
 EMBEDDED_TRANSCLUSION_END    \|
 LINK_END                >|[[:space:]]
+LINK_CATCH              >
 ANCHOR_BEGIN            @
 
 ADDRESS                 [^\\[:space:]>]*
@@ -56,7 +57,8 @@ TEXT                    [^\n>\\]*
 
 QUOTE_QUOTE             \\\\
 PREFIX_QUOTE_LINK_BEGIN \\>
-SUFFIX_QUOTE_LINK_BEGIN >\n
+SUFFIX_QUOTE_GENERIC_LINK_BEGIN >\n
+SUFFIX_QUOTE_HYPER_LINK_BEGIN   >>\n
 QUOTE_LINK_END          \\[[:blank:]] 
 QUOTE_HEADING_MARKER    \\=
 QUOTE_LIST_ITEM_MARKER  \\-
@@ -70,18 +72,20 @@ QUOTE_CATCH             \\
 <INITIAL>{PARAGRAPH_MARKER} { CHECK(output_begin_paragraph());
                               yyless(0); BEGIN(PARAGRAPH);}
 
-<PARAGRAPH>{LINK_BEGIN} { output_begin_link(); RET = PARAGRAPH; BEGIN(LINK); }
-<PARAGRAPH>{SUFFIX_QUOTE_LINK_BEGIN} { CHECK(wo(yytext)); }
+<PARAGRAPH>{HYPER_LINK_BEGIN} { output_begin_link();
+                                RET = PARAGRAPH; BEGIN(LINK); }
+<PARAGRAPH>{SUFFIX_QUOTE_HYPER_LINK_BEGIN} { CHECK(wo(yytext)); }
 <PARAGRAPH>{TEXT}       |
+<PARAGRAPH>{LINK_CATCH} |
 <PARAGRAPH>\n           CHECK(wo(yytext));
 <PARAGRAPH><<EOF>>      |
 <PARAGRAPH>{BLOCK_END}  { CHECK(output_end_paragraph()); BEGIN(INITIAL); }
 
 <LINK>{ADDRESS}         { CHECK(wo(yytext)); }
-<LINK>{QUOTE_LINK_END}  { yyless(0); }
 <LINK><<EOF>>           |
 <LINK>{LINK_END}        { output_end_link(); yyless(0); BEGIN(RET); }
 
+<LINK>{QUOTE_LINK_END}  |
 <PARAGRAPH,LINK>{PREFIX_QUOTE_LINK_BEGIN}  { CHECK(wo(yytext+1)); }
 <PARAGRAPH,LINK>{QUOTE_QUOTE}     |
 <PARAGRAPH,LINK>{QUOTE_CATCH}     { CHECK(wo("\\")); }

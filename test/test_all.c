@@ -38,7 +38,7 @@ TEST_LIST = {
 *
 * celebrate
 *
-* flag for alternative LINK_BEGIN (e.g. ">>" for html)
+* generic link
 *
 * formatting element: headers
 * formatting flag

@@ -83,9 +83,9 @@ void test_parse_solo_link(void) {
 	char checker_alloc[60];
 	struct Buffer checker_buffer;
 	long unsigned int i = 0;
-	char *links[]  = { ">example.com",
-	                   "\n>example.com",
-	                   ">example.com\n\n" };
+	char *links[]  = { ">>example.com",
+	                   "\n>>example.com",
+	                   ">>example.com\n\n" };
 	init_buffer(&checker_buffer, checker_alloc, LENGTH(checker_alloc));
 
 	TEST_CASE("solo link");
@@ -102,7 +102,7 @@ void test_parse_solo_link(void) {
 }
 
 int test_beginning_single_link(char *parser_alloc, int length_parser_alloc, struct Buffer *checker_buffer) {
-	char *mixed_link = ">example.com lorem ipsum";
+	char *mixed_link = ">>example.com lorem ipsum";
 
 	TEST_ASSERT(string_parse(mixed_link, parser_alloc, length_parser_alloc));
 	TEST_ASSERT(begin_paragraph(checker_buffer));
@@ -115,7 +115,7 @@ int test_beginning_single_link(char *parser_alloc, int length_parser_alloc, stru
 }
 
 int test_middle_single_link(char *parser_alloc, int length_parser_alloc, struct Buffer *checker_buffer) {
-	char *mixed_link = "lorem >example.com ipsum";
+	char *mixed_link = "lorem >>example.com ipsum";
 
 	TEST_ASSERT(string_parse(mixed_link, parser_alloc, length_parser_alloc));
 	TEST_ASSERT(begin_paragraph(checker_buffer));
@@ -129,7 +129,7 @@ int test_middle_single_link(char *parser_alloc, int length_parser_alloc, struct 
 }
 
 int test_end_single_link(char *parser_alloc, int length_parser_alloc, struct Buffer *checker_buffer) {
-	char *mixed_link  = "lorem ipsum\n>example.com\n";
+	char *mixed_link  = "lorem ipsum\n>>example.com\n";
 
 	TEST_ASSERT(string_parse(mixed_link, parser_alloc, length_parser_alloc));
 	TEST_ASSERT(begin_paragraph(checker_buffer));
@@ -143,7 +143,7 @@ int test_end_single_link(char *parser_alloc, int length_parser_alloc, struct Buf
 }
 
 int test_multi_link(char *parser_alloc, int length_parser_alloc, struct Buffer *checker_buffer) {
-	char *mixed_link  = "> example.com> example.com lorem ipsum\n>example.com";
+	char *mixed_link  = ">> example.com>> example.com lorem ipsum\n>>example.com";
 
 	TEST_ASSERT(string_parse(mixed_link, parser_alloc, length_parser_alloc));
 	TEST_ASSERT(begin_paragraph(checker_buffer));
@@ -181,12 +181,12 @@ void test_escaped_links(void) {
 	char parser_alloc[256];
 	char checker_alloc[256];
 	struct Buffer checker_buffer;
-	char *escaped_links  = "lorem ipsum\\>example.com\\\\\\>\\n\nlorem>\nipsum \\>";
+	char *escaped_links  = "lorem > ipsum\\>>example.com\\\\\\>\\n\nlorem>\nipsum \\>";
 	
 	TEST_ASSERT(string_parse(escaped_links, parser_alloc, LENGTH(parser_alloc)));
 	init_buffer(&checker_buffer, checker_alloc, LENGTH(checker_alloc));
 	TEST_ASSERT(begin_paragraph(&checker_buffer));
-	TEST_ASSERT(write_buffer(&checker_buffer, "lorem ipsum>example.com\\>\\n\nlorem>\nipsum >"));
+	TEST_ASSERT(write_buffer(&checker_buffer, "lorem > ipsum>>example.com\\>\\n\nlorem>\nipsum >"));
 	TEST_ASSERT(end_paragraph(&checker_buffer));
 	TEST_CHECK(strcmp(parser_alloc, checker_alloc) == 0);
 	clear_buffer(&checker_buffer);
