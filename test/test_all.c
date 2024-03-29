@@ -20,24 +20,32 @@ TEST_LIST = {
 
 /* FEATURES
 *
-* html:
+* escaped links
+* escapes in links
 *
-* sring_parse of text with link only is equivalent to make_link
-* string_parse of text x link is equivalent to make_text x make_link
+* refactor: incl. yacc & strdup
 *
-* graph:
-* Equivalent to above
+* graphviz of links
 *
-* latex:
-* ditto
+* latex
 *
-* next:
 * file output
-* transclusion accounted for
+* full orthography
+* transclusion
 * transclusion of stdin
+*
+* celebrate
+*
+* flag for alternative LINK_BEGIN (e.g. ">>" for html)
+*
+* formatting element: headers
 * formatting flag
+*
 * transclusion of other file formats:
 *     build system: logging of dependencies, builds of dependencies
 *
+* anchor
+*
+* other formatting elements
+*
 */
-
