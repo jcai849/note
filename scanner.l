@@ -52,12 +52,11 @@ ITALIC                  ~
 SUPERSCRIPT             \^
 SUBSCRIPT               _
 VARIABLE                \|
-TEXT                    [^\n>]*
-/* TEXT	                [^*^_|\n\\>@]* */
+TEXT                    [^\n>\\]*
 
 QUOTE_QUOTE             \\\\
-QUOTE_LINK_BEGIN_PRE    \\>
-QUOTE_LINK_BEGIN_POST   >\n
+PREFIX_QUOTE_LINK_BEGIN \\>
+SUFFIX_QUOTE_LINK_BEGIN >\n
 QUOTE_LINK_END          \\[[:blank:]] 
 QUOTE_HEADING_MARKER    \\=
 QUOTE_LIST_ITEM_MARKER  \\-
@@ -72,8 +71,7 @@ QUOTE_CATCH             \\
                               yyless(0); BEGIN(PARAGRAPH);}
 
 <PARAGRAPH>{LINK_BEGIN} { output_begin_link(); RET = PARAGRAPH; BEGIN(LINK); }
-<PARAGRAPH>{QUOTE_LINK_BEGIN_PRE}  { CHECK(wo(yytext+1)); }
-<PARAGRAPH>{QUOTE_LINK_BEGIN_POST} { CHECK(wo(yytext)); }
+<PARAGRAPH>{SUFFIX_QUOTE_LINK_BEGIN} { CHECK(wo(yytext)); }
 <PARAGRAPH>{TEXT}       |
 <PARAGRAPH>\n           CHECK(wo(yytext));
 <PARAGRAPH><<EOF>>      |
@@ -81,11 +79,12 @@ QUOTE_CATCH             \\
 
 <LINK>{ADDRESS}         { CHECK(wo(yytext)); }
 <LINK>{QUOTE_LINK_END}  { yyless(0); }
-<LINK>{QUOTE_LINK_BEGIN_PRE} { CHECK(wo(">")); }
-<LINK>{QUOTE_QUOTE}     |
-<LINK>{QUOTE_CATCH}     { CHECK(wo("\\")); }
 <LINK><<EOF>>           |
 <LINK>{LINK_END}        { output_end_link(); yyless(0); BEGIN(RET); }
+
+<PARAGRAPH,LINK>{PREFIX_QUOTE_LINK_BEGIN}  { CHECK(wo(yytext+1)); }
+<PARAGRAPH,LINK>{QUOTE_QUOTE}     |
+<PARAGRAPH,LINK>{QUOTE_CATCH}     { CHECK(wo("\\")); }
 
 %%
 

@@ -176,3 +176,18 @@ void test_parse_mixed_links(void) {
 	TEST_CHECK(test_multi_link(parser_alloc, LENGTH(parser_alloc), &checker_buffer));
 	clear_buffer(&checker_buffer);
 }
+
+void test_escaped_links(void) {
+	char parser_alloc[256];
+	char checker_alloc[256];
+	struct Buffer checker_buffer;
+	char *escaped_links  = "lorem ipsum\\>example.com\\\\\\>\\n\nlorem>\nipsum \\>";
+	
+	TEST_ASSERT(string_parse(escaped_links, parser_alloc, LENGTH(parser_alloc)));
+	init_buffer(&checker_buffer, checker_alloc, LENGTH(checker_alloc));
+	TEST_ASSERT(begin_paragraph(&checker_buffer));
+	TEST_ASSERT(write_buffer(&checker_buffer, "lorem ipsum>example.com\\>\\n\nlorem>\nipsum >"));
+	TEST_ASSERT(end_paragraph(&checker_buffer));
+	TEST_CHECK(strcmp(parser_alloc, checker_alloc) == 0);
+	clear_buffer(&checker_buffer);
+}

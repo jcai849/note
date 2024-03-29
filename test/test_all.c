@@ -17,12 +17,12 @@ TEST_LIST = {
 	{ "string_parse of multi paragraph text with no link creates appropriate paragraph blocks", test_parse_multi_paragraph },
 	{ "string_parse of only link is equivalent to paragraph with link in it", test_parse_solo_link },
 	{ "string_parse of links mixed with test is equivalent to paragraph with links and text in it", test_parse_mixed_links },
+	{ "string_parse of paragraph with escaped links yields no links", test_escaped_links },
 	{ NULL, NULL }     /* zeroed record marking the end of the list */
 };
 
 /* FEATURES
 *
-* escaped links
 * escapes in links
 *
 * refactor: incl. yacc & strdup
