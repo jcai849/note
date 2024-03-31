@@ -24,18 +24,25 @@ TEST_LIST = {
 
 /* FEATURES
 *
-* escapes in links
+* refactor:
+	* condition stack
+	* reentrant
+	* replace string parse with yyin fmemopen
+	* replace buffer w/ open_memstream; ECHO
+	* file output
+*
+* simple transclusion
+* transclusion of stdin
 *
 * refactor: incl. yacc & strdup
+*
+* transclusion with escapes
 *
 * graphviz of links
 *
 * latex
 *
-* file output
 * full orthography
-* transclusion
-* transclusion of stdin
 *
 * celebrate
 *

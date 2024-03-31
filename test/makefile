@@ -12,15 +12,16 @@ RM      = rm -f
 LDLIBS = $(LIBDIR)/libnote.a
 LDLIBS += `pkg-config note --libs --static`
 CFLAGS  = -Wall -Wextra
+CFLAGS += -std=c99 -pedantic
+CFLAGS += -fsanitize=address,undefined
 CFLAGS += -g
-CFLAGS += -D_POSIX_C_SOURCE=200809L
 CFLAGS += -I$(UTESTDIR)/include/
 CFLAGS += -I$(LIBDIR)
 
-test: test_all
-	./test_all
+test: test_units
+	./test_units
 
-test_all: test_all.c test_test.c test_buffer.c test_parse.c
+test_units: test_units.c test_test.c test_buffer.c test_parse.c
 
 clean:
 	$(RM) *.o
